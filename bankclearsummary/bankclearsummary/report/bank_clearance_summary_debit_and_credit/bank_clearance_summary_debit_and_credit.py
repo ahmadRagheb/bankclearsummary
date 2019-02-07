@@ -24,7 +24,6 @@ def get_columns():
 		_("Against Account") + ":Link/Account:170",
 		_("Debit") + ":Currency:120",
 		_("Credit") + ":Currency:120",
-		_("Amount") + ":Currency:120"
 	]
 
 def get_conditions(filters):
@@ -38,14 +37,13 @@ def get_conditions(filters):
 def get_entries(filters):
 	conditions = get_conditions(filters)
 	journal_entries =  frappe.db.sql("""select "Journal Entry", jv.name, jv.posting_date,
-		jv.cheque_no, jv.clearance_date, jvd.against_account,jvd.debit, jvd.credit, (jvd.debit - jvd.credit)
+		jv.cheque_no, jv.clearance_date, jvd.against_account,jvd.debit, jvd.credit
 		from `tabJournal Entry Account` jvd, `tabJournal Entry` jv
 		where jvd.parent = jv.name and jv.docstatus=1 and jvd.account = %(account)s {0}
 		order by posting_date DESC, jv.name DESC""".format(conditions), filters, as_list=1)
 
 	payment_entries =  frappe.db.sql("""select "Payment Entry", name, posting_date,
-		reference_no, clearance_date, party, paid_amount, received_amount, 
-		if(paid_from=%(account)s, paid_amount, received_amount)
+		reference_no, clearance_date, party, paid_amount, received_amount
 		from `tabPayment Entry`
 		where docstatus=1 and (paid_from = %(account)s or paid_to = %(account)s) {0}
 		order by posting_date DESC, name DESC""".format(conditions), filters, as_list=1)
