@@ -1,0 +1,71 @@
+<h2 class="text-center">{%= __("Bank Clearance Summary Debit and Credit") %}</h2>
+<h4 class="text-center">
+	{% if (filters.party_name) { %}
+		{%= filters.party_name %}
+	{% } else if (filters.party && filters.show_name) { %}
+		{%= filters.party %}
+	{% } else if (filters.account) { %}
+		{%= filters.account %}
+	{% } %}
+</h4>
+
+<h5 class="text-center">
+	{%= frappe.datetime.str_to_user(filters.from_date) %}
+	{%= __("to") %}
+	{%= frappe.datetime.str_to_user(filters.to_date) %}
+</h5>
+<hr>
+
+
+{%= 
+
+Object.keys(data[1])
+ %}
+
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th style="width: 12%">{%= __("Payment Document") %}</th>
+			<th style="width: 15%">{%= __("Payment Entry") %}</th>
+			<th style="width: 25%">{%= __("Posting Date") %}</th>
+			<th style="width: 15%">{%= __("Cheque/Reference No") %}</th>
+			<th style="width: 15%">{%= __("Clearance Date") %}</th>
+			<th style="width: 18%">{%= __("Against Account") %}</th>
+			<th style="width: 18%">{%= __("Debit") %}</th>
+			<th style="width: 18%">{%= __("Credit") %}</th>
+			<th style="width: 18%">{%= __("Amount") %}</th>
+		</tr>
+	</thead>
+	<tbody>
+
+
+		{% for(var i=0, l=data.length; i<l; i++) { %}
+			<tr>
+			<td>{%= data[i]["Payment Document"] %}</td>
+			<td>{%= data[i]["Payment Entry"] %}</td>
+
+			{% if(data[i]["Posting Date"]) { %}
+				<td>{%= frappe.datetime.str_to_user(data[i]["Posting Date"]) %}</td>
+			{% } else { %}
+				<td></td>
+			{% } %}
+			<td>  {%= data[i]["Cheque/Reference No"] %}  </td>	
+			<td>  {%= data[i]["Clearance Date"] %}  </td>	
+			<td>  {%= data[i]["Against Account"] %}  </td>	
+
+
+			<td style="text-align: right">
+				{%= format_currency(data[i]["Debit"], filters.presentation_currency) %}
+			</td>
+			<td style="text-align: right">
+				{%= format_currency(data[i]["Credit"], filters.presentation_currency) %}
+			</td>
+			
+			<td style="text-align: right">
+				{%= format_currency(data[i]["Amount"], filters.presentation_currency) %}
+			</td>
+			</tr>
+		{% } %}
+	</tbody>
+</table>
+<p class="text-right text-muted">Printed On {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}</p>
